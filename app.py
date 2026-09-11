@@ -8,8 +8,14 @@ st.set_page_config(page_title="OmniSearch Agent", page_icon="🔍", layout="wide
 st.title("🔍 OmniSearch Agent")
 st.markdown("**Autonomous Multi-Step Search & Reasoning AI Agent**")
 
-# Get API key from Streamlit Secrets or Environment Variables
-api_key = st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
+st.sidebar.header("⚙️ Agent Settings")
+user_api_key = st.sidebar.text_input(
+    "Gemini API Key (Optional):", 
+    type="password",
+    help="Leave blank to use the app's default secret key."
+)
+
+api_key = user_api_key or st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
 
 query = st.text_input(
     "Enter your research prompt:", 
@@ -17,7 +23,6 @@ query = st.text_input(
 )
 
 def fetch_web_results(search_query, num_results=5):
-    """Fetches real-time web search results using DuckDuckGo."""
     results = []
     with DDGS() as ddgs:
         for r in ddgs.text(search_query, max_results=num_results):
@@ -28,12 +33,12 @@ if st.button("Run OmniSearch Agent", type="primary"):
     if not query:
         st.warning("Please enter a research prompt.")
     elif not api_key:
-        st.error("Missing Gemini API Key. Please configure GEMINI_API_KEY in Streamlit Secrets.")
+        st.error("Missing Gemini API Key. Please enter a key in the sidebar or configure GEMINI_API_KEY in Streamlit Secrets.")
     else:
         with st.status("Agent processing query...", expanded=True) as status:
             st.write("📖 **1. Read:** Gathering live web data from search engines...")
             search_context = fetch_web_results(query)
-            
+
             st.write("🧠 **2. Reason:** Synthesizing web context with LLM reasoning...")
             client = genai.Client(api_key=api_key)
             prompt = f"""
@@ -48,18 +53,18 @@ if st.button("Run OmniSearch Agent", type="primary"):
             2. Produce a clear, highly accurate, and concise executive summary answering the user's prompt.
             3. Include key details and cite source URLs directly where relevant.
             """
-            
+
             response = client.models.generate_content(
                 model="gemini-2.5-flash",
                 contents=prompt
             )
-            
+
             st.write("⚙️ **3. Act:** Rendering executive research brief...")
             status.update(label="Research Complete!", state="complete", expanded=False)
-        
+
         st.success("Analysis Complete!")
         st.subheader("Synthesized Executive Report")
         st.markdown(response.text)
-        
+
         with st.expander("View Raw Web Context Retrieved"):
             st.text(search_context)
