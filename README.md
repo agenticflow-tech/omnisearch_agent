@@ -35,29 +35,6 @@ OmniSearch Agent bridges real-time web data extraction with multi-agent reasonin
 ## 🚀 Quick Start
 
 ### 1. Clone the Repository
-\`\`\`bash
+```bash
 git clone https://github.com/agenticflow-tech/omnisearch_agent.git
 cd omnisearch_agent
-\`\`\`
-
-### 2. Install Dependencies
-\`\`\`bash
-pip install -r requirements.txt
-\`\`\`
-
-### 3. Set Up API Keys
-Add your Anakin API credentials to your environment or Streamlit secrets:
-\`\`\`bash
-ANAKIN_API_KEY="your_api_key_here"
-\`\`\`
-
-### 4. Run the Application
-\`\`\`bash
-streamlit run app.py
-\`\`\`
-
----
-
-## 👨‍💻 Author
-
-Built with dedication by **agenticflow-tech** for the Anakin Forge Hackathon.
